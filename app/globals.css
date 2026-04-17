@@ -49,35 +49,15 @@ body {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Body background (globe “blobs”) – now 7 % smaller *again* (≈13.7 %   */
-/*  smaller than the original)                                         */
+/*  Page background                                                  */
 /* ------------------------------------------------------------------ */
 body {
-  background:
-    radial-gradient(1038px 692px at 12% -10%, rgba(45, 212, 191, 0.10), transparent 60%),
-    radial-gradient(865px 605px at 95% 5%,  rgba(90, 215, 255, 0.07), transparent 60%),
-    radial-gradient(778px 692px at 50% 110%, rgba(134, 239, 172, 0.06), transparent 60%),
-    linear-gradient(180deg, #04080a 0%, #060d12 60%, #04080a 100%);
+  background: #04080a;
   min-height: 100vh;
   overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
-/* ------------------------------------------------------------------ */
-/*  Continents overlay – subtle, colour‑muted, sits above the aurora     */
-/* ------------------------------------------------------------------ */
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;          /* never blocks clicks */
-  z-index: 1;                    /* above .aurora (z-index:0) */
-  background: url('https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg')
-              center / 70% no-repeat;
-  mix-blend-mode: overlay;       /* blends gently with the dark background */
-  opacity: 0.45;                /* tone‑down the image */
-}
-
-/* ------------------------------------------------------------------ */
 /*  Glass surface                                                       */
 /* ------------------------------------------------------------------ */
 .glass {
@@ -394,4 +374,4 @@ body::after {
 ::selection {
   background: rgba(75, 228, 197, 0.35);
   color: #021410;
-}
+}
