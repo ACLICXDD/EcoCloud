@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { allPrices } from "../../../lib/db";
-import { parseRegion } from "../../../lib/regions";
-import type { DatacenterDetail, Offer } from "../../../lib/datacenters";
+import { allPrices } from "@/app/lib/db";
+import { parseRegion } from "@/app/lib/regions";
+import type { DatacenterDetail, Offer } from "@/app/lib/datacenters";
 
 export const dynamic = "force-dynamic";
 

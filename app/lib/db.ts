@@ -8,7 +8,6 @@ function db() {
   if (!_db) {
     const file = path.join(process.cwd(), "data", "cloud.db");
     _db = new Database(file, { readonly: true, fileMustExist: true });
-    _db.pragma("journal_mode = WAL");
   }
   return _db;
 }
@@ -28,7 +27,6 @@ export function allPrices(): PriceRow[] {
     .all() as PriceRow[];
 }
 
-// Cheapest configuration that satisfies cpu / vram requirements.
 export function priceQuery(opts: { minCpu: number; minVram: number }) {
   return db()
     .prepare(

@@ -75,9 +75,7 @@ export default function WorkloadSection({
     }
   };
 
-  const optimalDcId = decision
-    ? `${decision.optimal.provider}::${decision.optimal.region.split(" ")[0]}`
-    : null;
+  const optimalDcId = decision?.optimalDatacenterId ?? null;
 
   return (
     <section className="relative min-h-screen w-full px-8 py-12 flex flex-col gap-6">

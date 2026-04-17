@@ -1,22 +1,17 @@
-// Shared types between server (API routes) and client.
-// Carbon has been removed from the model — pricing & locality only.
 
 export type Provider = "aws" | "gcp" | "azure" | string;
 
 export type Datacenter = {
-  // Composite id derived from provider+region so the same region from
-  // different providers is treated as distinct nodes on the globe.
   id: string;
   provider: Provider;
-  regionCode: string;       // e.g. us-east-1
-  regionLabel: string;      // raw label from DB
+  regionCode: string;       
+  regionLabel: string;      
   city: string;
   country: string;
   lat: number;
   lon: number;
-  // Aggregated across all SKUs for this provider+region pair.
-  offers: number;           // count of SKUs
-  minPrice: number;         // cheapest $/hr in this region
+  offers: number;           
+  minPrice: number;        
   avgPrice: number;
   maxPrice: number;
   cpuMax: number;
@@ -35,9 +30,9 @@ export type Offer = {
 export type Decision = {
   request: { cpu: number; vram: number };
   optimal: Offer;
-  baseline: Offer;          // most expensive matching offer (worst case)
+  baseline: Offer;          
   matches: Offer[];
-  savingsPct: number;       // optimal vs baseline
+  savingsPct: number;      
   avgPrice: number;
   totalMatches: number;
 };

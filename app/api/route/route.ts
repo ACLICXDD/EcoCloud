@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { priceQuery } from "../../lib/db";
 import type { Decision, Offer } from "../../lib/datacenters";
+import { parseRegion } from "../../lib/regions";
 
 export const dynamic = "force-dynamic";
 
@@ -35,9 +36,11 @@ export async function POST(req: Request) {
   const optimal = matches[0];
   const baseline = matches[matches.length - 1];
   const avg = matches.reduce((s, m) => s + m.pricePerHour, 0) / matches.length;
+  const optimalRegionCode = parseRegion(optimal.region).code;
 
   const decision: Decision = {
     request: { cpu, vram },
+    optimalDatacenterId: `${optimal.provider}::${optimalRegionCode}`,
     optimal,
     baseline,
     matches,
