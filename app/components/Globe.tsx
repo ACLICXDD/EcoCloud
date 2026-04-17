@@ -87,42 +87,116 @@ export default function Globe({ origin, nodes, optimalId, baselineId }: Props) {
       );
       root.add(wire);
 
-      // ─── Continents as a dot pattern (procedural, no textures) ──────
+      // ─── Continents as a dot pattern ────────────────────────────────
       const dotGroup = new THREE.Group();
-      const dotMat = new THREE.PointsMaterial({
-        color: 0x86efac,
-        size: 0.022,
-        transparent: true,
-        opacity: 0.55,
-        sizeAttenuation: true,
-        depthWrite: false,
-      });
-      const dotPositions: number[] = [];
-      // Fibonacci sphere distribution; "land" mask via deterministic noise.
-      const SAMPLES = 2400;
-      const golden = Math.PI * (3 - Math.sqrt(5));
-      for (let i = 0; i < SAMPLES; i++) {
-        const y = 1 - (i / (SAMPLES - 1)) * 2;
-        const r = Math.sqrt(1 - y * y);
-        const t = golden * i;
-        const x = Math.cos(t) * r;
-        const z = Math.sin(t) * r;
-        // cheap pseudo-noise to imitate landmasses
-        const n =
-          Math.sin(x * 4.2 + 1.7) * Math.cos(y * 5.1 - 0.4) +
-          Math.sin(z * 3.8 + y * 2.1) * 0.6;
-        if (n > 0.45) {
-          dotPositions.push(x * RADIUS * 1.005, y * RADIUS * 1.005, z * RADIUS * 1.005);
-        }
-      }
-      const dotGeo = new THREE.BufferGeometry();
-      dotGeo.setAttribute(
-        "position",
-        new THREE.Float32BufferAttribute(dotPositions, 3)
-      );
-      const dots = new THREE.Points(dotGeo, dotMat);
-      dotGroup.add(dots);
       root.add(dotGroup);
+
+      const mapLoader = new THREE.TextureLoader();
+      mapLoader.crossOrigin = "anonymous";
+
+      const createDots = (data: Uint8ClampedArray | null, w: number, h: number) => {
+        const dotMat = new THREE.PointsMaterial({
+          color: 0x86efac,
+          size: 0.022,
+          transparent: true,
+          opacity: 0.6,
+          sizeAttenuation: true,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending,
+        });
+
+        const edgeMat = new THREE.PointsMaterial({
+          color: 0x4be4c5,
+          size: 0.03,
+          transparent: true,
+          opacity: 0.85,
+          sizeAttenuation: true,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending,
+        });
+
+        const dotPositions: number[] = [];
+        const edgePositions: number[] = [];
+        const SAMPLES = 28000; // High density for accuracy
+        const golden = Math.PI * (3 - Math.sqrt(5));
+
+        for (let i = 0; i < SAMPLES; i++) {
+          const y = 1 - (i / (SAMPLES - 1)) * 2;
+          const r = Math.sqrt(1 - y * y);
+          const t = golden * i;
+          const x = Math.cos(t) * r;
+          const z = Math.sin(t) * r;
+
+          // Spherical to UV (Equirectangular)
+          const u = (Math.atan2(x, z) + Math.PI) / (2 * Math.PI);
+          const v = Math.acos(y) / Math.PI;
+
+          let isLand = false;
+          let isEdge = false;
+
+          if (data) {
+            const px = Math.floor(u * (w - 1));
+            const py = Math.floor(v * (h - 1));
+            const idx = (py * w + px) * 4;
+            // Land is white/light in specular maps
+            isLand = data[idx] > 100; 
+
+            if (isLand) {
+              // Check neighbors for more precise edge detection
+              const nx = Math.floor(((u + 0.003) % 1) * (w - 1));
+              const ny = Math.floor(Math.min(0.999, v + 0.003) * (h - 1));
+              const nidx1 = (py * w + nx) * 4;
+              const nidx2 = (ny * w + px) * 4;
+              if (data[nidx1] <= 100 || data[nidx2] <= 100) isEdge = true;
+            }
+          } else {
+            // High-detail procedural fallback
+            const n = Math.sin(x * 4 + 1) * Math.cos(y * 3) + 
+                      Math.sin(z * 4 + y) * 0.8 + 
+                      Math.cos(x * 12) * Math.sin(z * 12) * 0.2;
+            isLand = n > 0.45;
+          }
+
+          if (isLand) {
+            const pos = [x * RADIUS * 1.01, y * RADIUS * 1.01, z * RADIUS * 1.01];
+            if (isEdge) {
+              edgePositions.push(...pos);
+            } else {
+              dotPositions.push(...pos);
+            }
+          }
+        }
+
+        const dotGeo = new THREE.BufferGeometry();
+        dotGeo.setAttribute("position", new THREE.Float32BufferAttribute(dotPositions, 3));
+        dotGroup.add(new THREE.Points(dotGeo, dotMat));
+
+        const edgeGeo = new THREE.BufferGeometry();
+        edgeGeo.setAttribute("position", new THREE.Float32BufferAttribute(edgePositions, 3));
+        dotGroup.add(new THREE.Points(edgeGeo, edgeMat));
+      };
+
+      mapLoader.load(
+        "https://threejs.org/examples/textures/planets/earth_specular_2048.jpg",
+        (texture: any) => {
+          const img = texture.image;
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+          if (!ctx) { createDots(null, 0, 0); return; }
+          // Use higher resolution for 100% accuracy
+          canvas.width = 1024;
+          canvas.height = 512;
+          ctx.drawImage(img, 0, 0, 1024, 512);
+          createDots(ctx.getImageData(0, 0, 1024, 512).data, 1024, 512);
+        },
+        undefined,
+        () => {
+          console.warn("Globe: Accurate map failed to load, falling back to procedural patterns.");
+          createDots(null, 0, 0);
+        }
+      );
+
+      // ─── Inner glow / atmosphere ────────────────────────────────────
 
       // ─── Inner glow / atmosphere ────────────────────────────────────
       const atmoGeo = new THREE.SphereGeometry(RADIUS * 1.18, 64, 64);
@@ -172,7 +246,7 @@ export default function Globe({ origin, nodes, optimalId, baselineId }: Props) {
       root.add(arcsGroup);
 
       // ─── Pointer drag interaction ───────────────────────────────────
-      const drag = { active: false, x: 0, y: 0, vx: 0.0015, vy: 0.0 };
+      const drag = { active: false, x: 0, y: 0, vx: 0.0, vy: 0.0 };
       const onDown = (e: PointerEvent) => {
         drag.active = true;
         drag.x = e.clientX;
@@ -212,7 +286,6 @@ export default function Globe({ origin, nodes, optimalId, baselineId }: Props) {
         if (!drag.active) {
           root.rotation.y += drag.vx;
           drag.vx *= 0.98;
-          drag.vx += 0.0008; // gentle ambient spin
         }
         // Subtle breathing on atmosphere
         atmoMat.uniforms.uColor.value.setHSL(

@@ -128,7 +128,7 @@ export default function Page() {
       <main className="relative z-10 px-8 pb-10 grid grid-cols-12 gap-5">
         {/* Left column */}
         <div className="col-span-12 lg:col-span-3 flex flex-col gap-5">
-          <ControlPanel onDeploy={handleDeploy} isDeploying={isDeploying} />
+          <EnvCard />
           <NodeList
             nodes={DATACENTERS}
             optimalId={optimalId}
@@ -153,7 +153,6 @@ export default function Page() {
               </div>
             </div>
 
-            {/* Soft horizon gradient at edges (organic frame) */}
             <div className="absolute inset-0 pointer-events-none"
               style={{
                 background:
@@ -170,7 +169,6 @@ export default function Page() {
               />
             </div>
 
-            {/* Bottom caption / origin */}
             <div className="absolute bottom-0 left-0 right-0 z-10 p-5 flex items-end justify-between pointer-events-none">
               <div className="glass-soft px-3.5 py-2.5 flex items-center gap-3 pointer-events-auto">
                 <span className="size-2 rounded-full bg-white" style={{ boxShadow: "0 0 12px white" }} />
@@ -195,7 +193,7 @@ export default function Page() {
         {/* Right column */}
         <div className="col-span-12 lg:col-span-3 flex flex-col gap-5">
           <ResultsPanel decision={decision} />
-          <EnvCard />
+          <ControlPanel onDeploy={handleDeploy} isDeploying={isDeploying} />
         </div>
       </main>
 

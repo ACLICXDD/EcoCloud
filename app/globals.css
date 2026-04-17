@@ -22,6 +22,9 @@
   --glow-leaf: 0 0 22px rgba(134, 239, 172, 0.25);
 }
 
+/* ------------------------------------------------------------------ */
+/*  Theme variables                                                      */
+/* ------------------------------------------------------------------ */
 @theme inline {
   --color-background: var(--bg-0);
   --color-foreground: var(--ink);
@@ -30,11 +33,13 @@
   --font-mono: var(--font-geist-mono), "SF Mono", "JetBrains Mono", monospace;
 }
 
+/* ------------------------------------------------------------------ */
+/*  Base styles                                                         */
+/* ------------------------------------------------------------------ */
 * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
 html,
 body {
   background: var(--bg-0);
@@ -43,17 +48,38 @@ body {
   letter-spacing: -0.01em;
 }
 
+/* ------------------------------------------------------------------ */
+/*  Body background (globe “blobs”) – now 7 % smaller *again* (≈13.7 %   */
+/*  smaller than the original)                                         */
+/* ------------------------------------------------------------------ */
 body {
   background:
-    radial-gradient(1200px 800px at 12% -10%, rgba(45, 212, 191, 0.10), transparent 60%),
-    radial-gradient(1000px 700px at 95% 5%,  rgba(90, 215, 255, 0.07), transparent 60%),
-    radial-gradient(900px 800px at 50% 110%, rgba(134, 239, 172, 0.06), transparent 60%),
+    radial-gradient(1038px 692px at 12% -10%, rgba(45, 212, 191, 0.10), transparent 60%),
+    radial-gradient(865px 605px at 95% 5%,  rgba(90, 215, 255, 0.07), transparent 60%),
+    radial-gradient(778px 692px at 50% 110%, rgba(134, 239, 172, 0.06), transparent 60%),
     linear-gradient(180deg, #04080a 0%, #060d12 60%, #04080a 100%);
   min-height: 100vh;
   overflow-x: hidden;
 }
 
-/* ───────── Glass surface ───────── */
+/* ------------------------------------------------------------------ */
+/*  Continents overlay – subtle, colour‑muted, sits above the aurora     */
+/* ------------------------------------------------------------------ */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;          /* never blocks clicks */
+  z-index: 1;                    /* above .aurora (z-index:0) */
+  background: url('https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg')
+              center / 70% no-repeat;
+  mix-blend-mode: overlay;       /* blends gently with the dark background */
+  opacity: 0.45;                /* tone‑down the image */
+}
+
+/* ------------------------------------------------------------------ */
+/*  Glass surface                                                       */
+/* ------------------------------------------------------------------ */
 .glass {
   position: relative;
   background:
@@ -68,7 +94,6 @@ body {
     0 24px 60px -30px rgba(0, 0, 0, 0.6),
     0 1px 0 rgba(255, 255, 255, 0.02);
 }
-
 .glass::before {
   content: "";
   position: absolute;
@@ -80,7 +105,6 @@ body {
     radial-gradient(80% 50% at 100% 0%, rgba(90, 215, 255, 0.05), transparent 60%);
   mix-blend-mode: screen;
 }
-
 .glass-soft {
   background: rgba(255, 255, 255, 0.025);
   border: 1px solid var(--hairline);
@@ -88,12 +112,13 @@ body {
   backdrop-filter: blur(18px) saturate(130%);
   -webkit-backdrop-filter: blur(18px) saturate(130%);
 }
-
 .hairline {
   border-color: var(--hairline);
 }
 
-/* ───────── Type ───────── */
+/* ------------------------------------------------------------------ */
+/*  Typography                                                          */
+/* ------------------------------------------------------------------ */
 .eyebrow {
   font-size: 10px;
   font-weight: 600;
@@ -101,12 +126,10 @@ body {
   text-transform: uppercase;
   color: var(--ink-mute);
 }
-
 .numeric {
   font-feature-settings: "tnum" 1, "ss01" 1;
   font-variant-numeric: tabular-nums;
 }
-
 .text-grad-eco {
   background: linear-gradient(135deg, #86efac 0%, #4be4c5 50%, #5ad7ff 100%);
   -webkit-background-clip: text;
@@ -114,7 +137,9 @@ body {
   color: transparent;
 }
 
-/* ───────── Pills / Buttons ───────── */
+/* ------------------------------------------------------------------ */
+/*  Pills / Buttons                                                    */
+/* ------------------------------------------------------------------ */
 .pill {
   display: inline-flex;
   align-items: center;
@@ -127,14 +152,12 @@ body {
   color: var(--ink-soft);
   backdrop-filter: blur(18px);
 }
-
 .pill-live {
   background: linear-gradient(135deg, rgba(75, 228, 197, 0.16), rgba(134, 239, 172, 0.10));
   color: #b9fbe6;
   border-color: rgba(75, 228, 197, 0.35);
   box-shadow: 0 0 24px rgba(75, 228, 197, 0.25);
 }
-
 .btn-primary {
   display: inline-flex;
   align-items: center;
@@ -181,7 +204,9 @@ body {
 }
 .btn-ghost:hover { background: rgba(255, 255, 255, 0.07); color: var(--ink); }
 
-/* ───────── Inputs ───────── */
+/* ------------------------------------------------------------------ */
+/*  Inputs                                                            */
+/* ------------------------------------------------------------------ */
 .field {
   width: 100%;
   height: 42px;
@@ -201,6 +226,9 @@ body {
   box-shadow: 0 0 0 3px rgba(75, 228, 197, 0.12);
 }
 
+/* ------------------------------------------------------------------ */
+/*  Segmented control                                                 */
+/* ------------------------------------------------------------------ */
 .seg {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -228,7 +256,9 @@ body {
   box-shadow: 0 6px 18px -6px rgba(75, 228, 197, 0.6);
 }
 
-/* ───────── Slider ───────── */
+/* ------------------------------------------------------------------ */
+/*  Slider                                                            */
+/* ------------------------------------------------------------------ */
 .range {
   -webkit-appearance: none;
   appearance: none;
@@ -258,7 +288,9 @@ body {
   cursor: grab;
 }
 
-/* ───────── Bar chart ───────── */
+/* ------------------------------------------------------------------ */
+/*  Bar chart                                                         */
+/* ------------------------------------------------------------------ */
 .bar-track {
   position: relative;
   height: 10px;
@@ -283,7 +315,9 @@ body {
   box-shadow: 0 0 14px rgba(245, 158, 192, 0.3);
 }
 
-/* ───────── Animations ───────── */
+/* ------------------------------------------------------------------ */
+/*  Animations                                                         */
+/* ------------------------------------------------------------------ */
 @keyframes breath {
   0%, 100% { opacity: 0.75; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.04); }
@@ -327,7 +361,9 @@ body {
 }
 .flow-path { animation: flow 3.6s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
 
-/* ───────── Aurora background pulse ───────── */
+/* ------------------------------------------------------------------ */
+/*  Aurora background pulse                                            */
+/* ------------------------------------------------------------------ */
 .aurora {
   position: fixed;
   inset: 0;
@@ -341,7 +377,9 @@ body {
   animation: drift 14s ease-in-out infinite;
 }
 
-/* ───────── Scrollbar ───────── */
+/* ------------------------------------------------------------------ */
+/*  Scrollbar                                                          */
+/* ------------------------------------------------------------------ */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
@@ -350,8 +388,10 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover { background: rgba(75, 228, 197, 0.2); }
 
-/* Selection */
+/* ------------------------------------------------------------------ */
+/*  Selection                                                          */
+/* ------------------------------------------------------------------ */
 ::selection {
   background: rgba(75, 228, 197, 0.35);
   color: #021410;
-}
+}

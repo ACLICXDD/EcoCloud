@@ -34,32 +34,10 @@ export default function ControlPanel({ onDeploy, isDeploying }: Props) {
         </span>
       </header>
 
-      {/* Model name */}
-      <div className="flex flex-col gap-2">
-        <label className="eyebrow" htmlFor="model">Model</label>
-        <div className="relative">
-          <input
-            id="model"
-            value={model}
-            onChange={(e) => setModel(e.target.value)}
-            placeholder="e.g. claude-opus-4-7"
-            className="field pl-9"
-          />
-          <svg
-            viewBox="0 0 24 24"
-            className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-emerald-300/70"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.6"
-          >
-            <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1" strokeLinecap="round" />
-            <circle cx="12" cy="12" r="3.2" />
-          </svg>
-        </div>
-      </div>
+      
 
       {/* Priority segmented control */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 p-3 border-2 border-dashed border-cyan-400/20 rounded-xl">
         <label className="eyebrow">Priority</label>
         <div className="seg" role="tablist">
           {PRIORITIES.map((p) => (
